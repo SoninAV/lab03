@@ -7,9 +7,10 @@
 #include <windows.h>
 #include "histogram.h"
 #include "svg.h"
+#include <curl/curl.h>
 
 using namespace std;
-
+CURLE_URL_MALFORMAT_USER;
 vector<double> input_numbers(istream& in, const size_t count) {
     vector<double> result(count);
     for (size_t i = 0; i < count; i++) {
