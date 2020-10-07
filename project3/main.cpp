@@ -10,7 +10,7 @@
 #include <curl/curl.h>
 
 using namespace std;
-CURLE_URL_MALFORMAT_USER;
+
 vector<double> input_numbers(istream& in, const size_t count) {
     vector<double> result(count);
     for (size_t i = 0; i < count; i++) {
@@ -41,34 +41,41 @@ read_input(istream& in, bool prompt) {
         data.numbers = input_numbers(in, number_count);
         in >> data.bin_count;
     }
-
-    /*if (data.bin_count == 0)
-    {
-        data.bin_count = zero_bin_count(number_count);
-    }*/
-
-
     return data;
 }
 
-/*vector <size_t> make_histogram(const vector<double> &numbers,size_t bin_count)
-{
-    double min;
-    double max;
-    find_minmax(numbers,min,max);
-    vector<size_t> bins(bin_count,0);
-    for (double number : numbers)
-    {
-        size_t bin;
-        bin = (number - min) / (max - min) * bin_count;
-        if (bin == bin_count)
+size_t
+write_data(void* items, size_t item_size, size_t item_count, void* ctx) {
+    const size_t data_size = item_size * item_count;
+    const char* new_items = reinterpret_cast<const char*>(items);
+    stringstream* buffer = reinterpret_cast<stringstream*>(ctx);
+    buffer->write(new_items, data_size);
+    return data_size;
+}
+
+Input
+download(const string& address) {
+    stringstream buffer;
+
+    curl_global_init(CURL_GLOBAL_ALL);
+
+    CURL *curl = curl_easy_init();
+    if(curl) {
+        CURLcode res;
+        curl_easy_setopt(curl, CURLOPT_URL, address.c_str());
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
+        res = curl_easy_perform(curl);
+        if (res != CURLE_OK)
         {
-            bin--;
+            cout << curl_easy_strerror(res) << endl;
+            exit(1);
         }
-        bins[bin]++;
+        curl_easy_cleanup(curl);
     }
-    return bins;
-}*/
+   return read_input(buffer, false);
+}
+
 vector<size_t> make_histogram(const Input& data) {
     vector<size_t> result(data.bin_count);
     double min;
@@ -129,24 +136,67 @@ void show_histogram_text(const vector<size_t> &bins)
     }
 }
 
-int main()
-{
-    const auto input = read_input(cin, true);
+int main(int argc, char* argv[]) {
+    for(int i=0; i<argc; i++){
+        cerr << "argv["<< i << "]= " << argv[i] <<endl;
+    }
+    /*Input input;
+    char* format;
+    int num;
+
+    for (int i = 0; i < argc; i++)
+    {
+        if (strcmp(argv[i], "-format") == 0)
+        {
+            if (i != argc - 1)
+            {
+                format = argv[i+1];
+            }
+            num = i+1;
+            break;
+        }
+    }
+    if (((strcmp(format, "text") != 0) && (strcmp(format, "svg") != 0)) || (num == argc))
+    {
+        cout << "You need to enter to '-format' and then the format type ('text' or 'svg')!";
+        exit(1);
+    }
+
+    if (argc > 1)
+    {
+        if (num == 2)
+        {
+            input = download(argv[3]);
+        }
+        else
+        {
+            input = download(argv[1]);
+        }
+    }
+    else
+    {
+        input = read_input(cin, true);
+    }
+
+
+    const auto bins = make_histogram(input);
+
+    if (strcmp(format, "text") == 0)
+    {
+        show_histogram_text(bins);
+    }
+    else
+    {
+        show_histogram_svg(bins);
+    }*/
+
+    Input input;
+    if (argc > 1) {
+        input = download(argv[1]);
+    } else {
+        input = read_input(cin, true);
+    }
+
     const auto bins = make_histogram(input);
     show_histogram_svg(bins);
-    /*size_t number_count;
-    cerr << "Enter number count: ";
-    cin >> number_count;
-
-    const auto numbers = input_numbers(cin, number_count);
-    size_t bin_count;
-    cerr << "Enter column count: ";
-    cin >> bin_count;
-    double min, max;
-
-    find_minmax(numbers, min, max);
-    const auto bins = make_histogram(numbers, bin_count);
-    show_histogram_svg(bins, bin_count);
-    */
-    return 0;
 }

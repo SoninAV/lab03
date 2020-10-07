@@ -14,7 +14,12 @@
 				<Compiler>
 					<Add option="-std=c++14" />
 					<Add option="-g" />
+					<Add directory="curl/include" />
 				</Compiler>
+				<Linker>
+					<Add library="libcurl.dll.a" />
+					<Add directory="curl/lib" />
+				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/project3" prefix_auto="1" extension_auto="1" />

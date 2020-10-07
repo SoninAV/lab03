@@ -64,29 +64,6 @@ size_t find_max(const vector<size_t>& bins) {
     return max;
 }
 
-string make_color(const vector<size_t>& bins, size_t bin, size_t max_count) {
-    ostringstream os;
-    size_t min = find_min(bins);
-    size_t max = find_max(bins);
-    size_t x;
-    if (bin == max)
-    {
-        x = 1;
-    }
-    else if (bin == min)
-    {
-        x = 9;
-    }
-    else
-    {
-        x =10 - (bin * 9) / max_count;
-    }
-    os << x;
-    string color = os.str();
-    color += color + color;
-    return color;
-}
-
 /*void show_version(double y, const double TEXT_BSLN)
 {
     DWORD dwVersion = GetVersion();
@@ -138,10 +115,6 @@ void show_histogram_svg(const vector<size_t>& bins) {
     double top = 0;
     for (size_t bin : bins) {
 
-        string color = make_color(bins, bin, max_count);
-
-        cout << endl << color << endl;
-
         size_t height = bin;
         if (scaling_needed) {
             const double scaling_factor = (double)MAX_ASTERISK / (max_count * BLOCK_WIDTH);
@@ -150,7 +123,7 @@ void show_histogram_svg(const vector<size_t>& bins) {
 
         const double bin_width = BLOCK_WIDTH * height;
         svg_text(TEXT_LEFT, top + TEXT_BASELINE, bin);
-        svg_rect(TEXT_WIDTH, top, bin_width, BIN_HEIGHT, "red", "#" + color);
+        svg_rect(TEXT_WIDTH, top, bin_width, BIN_HEIGHT, "red", "grey" );
         top += BIN_HEIGHT;
     }
 
