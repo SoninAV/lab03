@@ -1,4 +1,16 @@
 #include "histogram.h"
+#include<windows.h>
+#include<iostream>
+#include <vector>
+#include <string>
+#include<curl/curl.h>
+#include<sstream>
+#include<cmath>
+#include<cstdio>
+#include<windows.h>
+#include "histogram.h"
+#include "svg.h"
+using namespace std;
 
 void find_minmax(const vector<double>& numbers, double& min, double& max)
 {
@@ -17,3 +29,64 @@ void find_minmax(const vector<double>& numbers, double& min, double& max)
     }
 }
 
+void write_version()
+{
+    DWORD dwVersion = GetVersion();
+
+    DWORD mask = 0x0000ffff;
+    DWORD version = dwVersion&mask;
+
+    DWORD platform = dwVersion >> 16;
+
+    DWORD mask2 = 0x00ff;
+    DWORD version_major = version&mask2;
+    DWORD version_minor = version >> 8;
+
+    char buffer[MAX_COMPUTERNAME_LENGTH+1]="";
+    if ((version & 0x80000000) == 0) {
+        DWORD size =MAX_COMPUTERNAME_LENGTH+1;
+        GetComputerNameA(buffer, &size);
+    }
+
+    DWORD build = platform;
+
+    cout << "Windows v" << version_major << "."
+    << version_minor << " (build " << build << ")" << endl;
+    cout << "Computer name: " << buffer << endl;
+
+}
+
+void show_histogram_text(vector<size_t> bins) {
+    const size_t SCREEN_WIDTH = 80;
+    const size_t MAX_ASTERISK = SCREEN_WIDTH - 4 - 1;
+
+    size_t max_count = 0;
+    for (size_t count : bins) {
+        if (count > max_count) {
+            max_count = count;
+        }
+    }
+    const bool scaling_needed = max_count > MAX_ASTERISK;
+
+    for (size_t bin : bins) {
+        if (bin < 100) {
+            cout << ' ';
+        }
+        if (bin < 10) {
+            cout << ' ';
+        }
+        cout << bin << "|";
+
+        size_t height = bin;
+        if (scaling_needed) {
+            const double scaling_factor = (double)MAX_ASTERISK / max_count;
+            height = (size_t)(bin * scaling_factor);
+        }
+
+        for (size_t i = 0; i < height; i++) {
+            cout << '*';
+        }
+        cout << '\n';
+    }
+    write_version();
+}

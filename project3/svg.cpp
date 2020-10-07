@@ -3,16 +3,12 @@
 #include <string>
 #include <sstream>
 #include<cstdio>
-vector<string> colors(size_t bin_count)
-{
-    vector<string> cin_colors(bin_count);
-    for (size_t i = 0; i < bin_count; i++)
-    {
-        getline(cin, cin_colors[i]);
-    }
-    return cin_colors;
-}
-
+#include<windows.h>
+#include <vector>
+#include <string>
+#include<curl/curl.h>
+#include<cmath>
+#include "svg.h"
 void svg_begin(double width, double height)
 {
     cout << "<?xml version='1.0' encoding='UTF-8'?>\n";
@@ -64,7 +60,7 @@ size_t find_max(const vector<size_t>& bins) {
     return max;
 }
 
-/*void show_version(double y, const double TEXT_BSLN)
+void show_version(double y, const double TEXT_BSLN)
 {
     DWORD dwVersion = GetVersion();
 
@@ -88,7 +84,7 @@ size_t find_max(const vector<size_t>& bins) {
 
     cout << "<text x='" << left << "' y='" << y + TEXT_BSLN << "'>Windows v" << version_major << "."
     << version_minor << " (build " << build << ")</text>";
-}*/
+}
 
 void show_histogram_svg(const vector<size_t>& bins) {
     const auto IMAGE_WIDTH = 400;
@@ -127,7 +123,7 @@ void show_histogram_svg(const vector<size_t>& bins) {
         top += BIN_HEIGHT;
     }
 
-    //show_version(top, TEXT_BASELINE);
+    show_version(top, TEXT_BASELINE);
 
     svg_end();
 }

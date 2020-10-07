@@ -6,8 +6,6 @@
 
 using namespace std;
 
-vector<string> colors(size_t bin_count);
-
 void svg_begin(double width, double height);
 
 void svg_end();

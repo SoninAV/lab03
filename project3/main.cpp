@@ -140,55 +140,6 @@ int main(int argc, char* argv[]) {
     for(int i=0; i<argc; i++){
         cerr << "argv["<< i << "]= " << argv[i] <<endl;
     }
-    /*Input input;
-    char* format;
-    int num;
-
-    for (int i = 0; i < argc; i++)
-    {
-        if (strcmp(argv[i], "-format") == 0)
-        {
-            if (i != argc - 1)
-            {
-                format = argv[i+1];
-            }
-            num = i+1;
-            break;
-        }
-    }
-    if (((strcmp(format, "text") != 0) && (strcmp(format, "svg") != 0)) || (num == argc))
-    {
-        cout << "You need to enter to '-format' and then the format type ('text' or 'svg')!";
-        exit(1);
-    }
-
-    if (argc > 1)
-    {
-        if (num == 2)
-        {
-            input = download(argv[3]);
-        }
-        else
-        {
-            input = download(argv[1]);
-        }
-    }
-    else
-    {
-        input = read_input(cin, true);
-    }
-
-
-    const auto bins = make_histogram(input);
-
-    if (strcmp(format, "text") == 0)
-    {
-        show_histogram_text(bins);
-    }
-    else
-    {
-        show_histogram_svg(bins);
-    }*/
 
     Input input;
     if (argc > 1) {
