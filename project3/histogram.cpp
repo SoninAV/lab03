@@ -1,15 +1,8 @@
-#include "histogram.h"
-#include<windows.h>
-#include<iostream>
+#include <iostream>
 #include <vector>
 #include <string>
-#include<curl/curl.h>
-#include<sstream>
-#include<cmath>
-#include<cstdio>
-#include<windows.h>
+#include <windows.h>
 #include "histogram.h"
-#include "svg.h"
 using namespace std;
 
 void find_minmax(const vector<double>& numbers, double& min, double& max)

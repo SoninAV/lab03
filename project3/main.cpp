@@ -19,6 +19,27 @@ vector<double> input_numbers(istream& in, const size_t count) {
     return result;
 }
 
+size_t zero_bin_count(const size_t& number_count) {
+    size_t k = sqrt(number_count);
+    if (k > 25)
+    {
+        k = 1 + log2(number_count);
+        /*cout << "Sterdjis rule" << endl;
+        return k;*/
+    }
+    //cout << "Emper formula" << endl;
+    return k;
+}
+
+size_t
+write_data(void* items, size_t item_size, size_t item_count, void* ctx) {
+    const size_t data_size = item_size * item_count;
+    const char* new_items = reinterpret_cast<const char*>(items);
+    stringstream* buffer = reinterpret_cast<stringstream*>(ctx);
+    buffer->write(new_items, data_size);
+    return data_size;
+}
+
 Input
 read_input(istream& in, bool prompt) {
     Input data;
@@ -41,16 +62,31 @@ read_input(istream& in, bool prompt) {
         data.numbers = input_numbers(in, number_count);
         in >> data.bin_count;
     }
+
+    if (data.bin_count == 0)
+    {
+        data.bin_count = zero_bin_count(number_count);
+    }
+
+
     return data;
 }
 
-size_t
-write_data(void* items, size_t item_size, size_t item_count, void* ctx) {
-    const size_t data_size = item_size * item_count;
-    const char* new_items = reinterpret_cast<const char*>(items);
-    stringstream* buffer = reinterpret_cast<stringstream*>(ctx);
-    buffer->write(new_items, data_size);
-    return data_size;
+
+vector<size_t> make_histogram(const Input& data) {
+    vector<size_t> result(data.bin_count);
+    double min;
+    double max;
+    find_minmax(data.numbers, min, max);
+    for (double number : data.numbers) {
+        size_t bin = (size_t)((number - min) / (max - min) * data.bin_count);
+        if (bin == data.bin_count) {
+            bin--;
+        }
+        result[bin]++;
+    }
+
+    return result;
 }
 
 Input
@@ -76,67 +112,9 @@ download(const string& address) {
    return read_input(buffer, false);
 }
 
-vector<size_t> make_histogram(const Input& data) {
-    vector<size_t> result(data.bin_count);
-    double min;
-    double max;
-    find_minmax(data.numbers, min, max);
-    for (double number : data.numbers) {
-        size_t bin = (size_t)((number - min) / (max - min) * data.bin_count);
-        if (bin == data.bin_count) {
-            bin--;
-        }
-        result[bin]++;
-    }
-
-    return result;
-}
-
-
-void show_histogram_text(const vector<size_t> &bins)
-{
-
-    const size_t SCREEN_WIDTH = 80;
-    const size_t MAX_ASTERISK = SCREEN_WIDTH - 4 - 1;
-
-    size_t max_count = 0;
-    for (size_t count : bins)
-    {
-        if (count > max_count)
-        {
-            max_count = count;
-        }
-    }
-    const bool scaling_needed = max_count > MAX_ASTERISK;
-
-    for (size_t bin : bins)
-    {
-        if (bin < 100)
-        {
-            cout << ' ';
-        }
-        if (bin < 10)
-        {
-            cout << ' ';
-        }
-        cout << bin << "|";
-
-        size_t height = bin;
-        if (scaling_needed)
-        {
-            const double scaling_factor = (double)MAX_ASTERISK / max_count;
-            height = (size_t)(bin * scaling_factor);
-        }
-
-        for (size_t i = 0; i < height; i++)
-        {
-            cout << '*';
-        }
-        cout << '\n';
-    }
-}
 
 int main(int argc, char* argv[]) {
+
     for(int i=0; i<argc; i++){
         cerr << "argv["<< i << "]= " << argv[i] <<endl;
     }
@@ -150,4 +128,6 @@ int main(int argc, char* argv[]) {
 
     const auto bins = make_histogram(input);
     show_histogram_svg(bins);
+
+
 }

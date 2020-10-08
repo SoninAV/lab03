@@ -1,14 +1,13 @@
-#include <iostream>
+
 #include "svg.h"
+#include <vector>
 #include <string>
+#include <iostream>
 #include <sstream>
 #include<cstdio>
 #include<windows.h>
-#include <vector>
-#include <string>
-#include<curl/curl.h>
-#include<cmath>
-#include "svg.h"
+using namespace std;
+
 void svg_begin(double width, double height)
 {
     cout << "<?xml version='1.0' encoding='UTF-8'?>\n";
