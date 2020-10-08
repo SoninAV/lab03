@@ -19,18 +19,6 @@ vector<double> input_numbers(istream& in, const size_t count) {
     return result;
 }
 
-size_t zero_bin_count(const size_t& number_count) {
-    size_t k = sqrt(number_count);
-    if (k > 25)
-    {
-        k = 1 + log2(number_count);
-        /*cout << "Sterdjis rule" << endl;
-        return k;*/
-    }
-    //cout << "Emper formula" << endl;
-    return k;
-}
-
 size_t
 write_data(void* items, size_t item_size, size_t item_count, void* ctx) {
     const size_t data_size = item_size * item_count;
@@ -61,11 +49,6 @@ read_input(istream& in, bool prompt) {
         in >> number_count;
         data.numbers = input_numbers(in, number_count);
         in >> data.bin_count;
-    }
-
-    if (data.bin_count == 0)
-    {
-        data.bin_count = zero_bin_count(number_count);
     }
 
 
@@ -126,8 +109,10 @@ int main(int argc, char* argv[]) {
         input = read_input(cin, true);
     }
 
+    auto colors = input_colors(input.bin_count, false);
+
     const auto bins = make_histogram(input);
-    show_histogram_svg(bins);
+    show_histogram_svg(bins, input.bin_count, false, argv[1], colors);
 
 
 }
